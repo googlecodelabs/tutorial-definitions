@@ -1,4 +1,4 @@
-// Copyright 2018 Google LLC
+// Copyright 2019 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,12 +14,38 @@
 
 syntax = "proto3";
 
-package devrel.tutorial;
+package devrel.codelab;
+
+// TODO: reverse listing order to make reading this more intuitive
+
+message Fragment {
+  // TODO
+}
+
+message Survey {
+  string title = 1;
+  repeated List questions = 2;
+}
+
+message Checkboxes {
+  Heading title = 1;
+  repeated List questions = 2;
+}
+
+message FAQ {
+  Heading title = 1;
+  repeated List questions = 2;
+}
 
 message Link {
   string text = 1;
   string location = 2;
 };
+
+message Button {
+  Link link = 1;
+  bool isDownloadButton = 2;
+}
 
 message InlineContent {
   oneof content {
@@ -32,37 +58,45 @@ message InlineContent {
 };
 
 message Heading {
-  repeated InlineContent inline_contents = 1;
+  string text = 3;
   int32 level = 2;
+
+  reserved 1;
 };
 
 message Image {
-  // TODO
+  string source = 1;
+  string size = 2;
+  string alt_title = 3;
+  string alt_description = 3;
 };
+
+message YoutubeVideo {
+  Image ImageSource = 1;
+}
 
 message InfoBox {
   repeated InlineContent inline_contents = 1;
 
   enum Disposition {
     UNKNOWN_DISPOSITION = 0;
-    POSITIVE = 1;
-    NEGATIVE = 2;
+    // POSITIVE = 1;
+    // NEGATIVE = 2;
+    NOTE = 1;
+    WARNING = 2;
   };
   Disposition disposition = 2;
 };
 
 message CodeBlock {
-  repeated InlineContent inline_contents = 1;
-  string code_location = 2;
+  string text = 4;
   string language_hint = 3;
-};
 
-message ListStep {
-  repeated Content contents = 1;
+  reserved 1, 2;
 };
 
 message List {
-  repeated ListStep list_steps = 1;
+  repeated InlineContent list_step = 1;
 
   enum ListVariety {
     UNKNOWN_VARIETY = 0;
@@ -74,29 +108,12 @@ message List {
 
 message BlockContent {
   oneof content {
-    Heading heading = 1;
     Image image = 2;
     InfoBox info_box = 3;
     CodeBlock code_block = 4;
-    HorizontalRule horizontal_rule = 5;
-    Table table = 6;
+
+    reserved 1, 5, 6;
   }
-};
-
-message HorizontalRule {
-  // No fields.
-};
-
-message Table {
-  repeated TableRow table_rows = 1;
-};
-
-message TableRow {
-  repeated TableCell table_cells = 1;
-};
-
-message TableCell {
-  repeated InlineContent inline_contents = 1;
 };
 
 message Content {
@@ -106,18 +123,39 @@ message Content {
   }
 };
 
-message Title {
-  repeated InlineContent inline_contents = 1;
+message StepTitle {
+  string text = 2;
+
+  reserved 1;
 };
 
 message Step {
-  Title title = 1;
-  map<string, string> metadata = 2;
-  repeated Content content = 3;
+  StepTitle title = 1;
+  int32 duration = 4;
+  repeated Content contents = 3;
+
+  reserved 2;
 };
 
+message Metadata {
+  string title = 8;
+  string summary = 1;      // use?
+  string url_id = 2;
+  string environment = 3;  // still used?
+  string category = 4;     // used to group in index pages?
+  string status = 5;       // even needed?
+  string feedback_link = 6;
+  int32 total_duration = 7;
+}
+// .dev so far has:
+// [Title]
+// [Topics]
+// [Creator]
+// [Last updated]
+
 message Tutorial {
-  Title title = 1;
-  map<string, string> metadata = 2;
+  Metadata meta = 1;
   repeated Step steps = 3;
+
+  reserved 2;
 };
